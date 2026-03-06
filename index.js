@@ -30,6 +30,15 @@ async function run() {
     await client.connect();
     console.log('db connected successfully');
     // =======================================================================
+    const database = client.db('jobsPortalDB');
+    const jobsCollection = database.collection('jobsColl');
+
+    // read operation for jobs
+    app.get('/jobs', async (req, res) => {
+      const cursor = jobsCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     // =======================================================================
     // Send a ping to confirm a successful connection
