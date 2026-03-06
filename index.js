@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // instance and define
 const app = express();
@@ -13,7 +13,7 @@ app.use(express.json());
 
 // database setup
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster1.oko4eb5.mongodb.net/?appName=Cluster1`;
-console.log(uri);
+// console.log(uri);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -33,10 +33,17 @@ async function run() {
     const database = client.db('jobsPortalDB');
     const jobsCollection = database.collection('jobsColl');
 
-    // read operation for jobs
+    // read operation for all jobs
     app.get('/jobs', async (req, res) => {
       const cursor = jobsCollection.find();
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // read operation for one job
+    app.get('/jobs/:id', async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await jobsCollection.findOne(query);
       res.send(result);
     });
 
