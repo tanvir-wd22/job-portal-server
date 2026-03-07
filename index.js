@@ -52,6 +52,20 @@ async function run() {
     app.get('/apps', async (req, res) => {
       const query = { applicant_email: req.query.email };
       const result = await applicationsCollection.find(query).toArray();
+      // aggregate job data
+      for (const appItem of result) {
+        // console.log(appItem);
+        // console.log(appItem.job_info_id);
+        const query2 = { _id: new ObjectId(appItem.job_info_id) };
+        const result2 = await jobsCollection.findOne(query2);
+        if (result2) {
+          appItem.title = result2.title;
+          appItem.company = result2.company;
+          appItem.company_logo = result2.company_logo;
+          appItem.location = result2.location;
+          appItem.jobType = result2.jobType;
+        }
+      }
       res.send(result);
     });
 
