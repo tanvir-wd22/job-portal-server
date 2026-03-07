@@ -32,7 +32,7 @@ async function run() {
     // =======================================================================
     const database = client.db('jobsPortalDB');
     const jobsCollection = database.collection('jobsColl');
-    const applicationsColl = database.collection('applicationsColl');
+    const applicationsCollection = database.collection('appsColl');
 
     // read operation for all jobs
     app.get('/jobs', async (req, res) => {
@@ -48,10 +48,17 @@ async function run() {
       res.send(result);
     });
 
+    // read operation for some applications
+    app.get('/apps', async (req, res) => {
+      const query = { applicant_email: req.query.email };
+      const result = await applicationsCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // create operation for applications
-    app.post('/applications', async (req, res) => {
+    app.post('/apps', async (req, res) => {
       const doc = req.body;
-      const result = await applicationsColl.insertOne(doc);
+      const result = await applicationsCollection.insertOne(doc);
       res.send(result);
     });
 
