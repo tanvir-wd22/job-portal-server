@@ -34,6 +34,8 @@ async function run() {
     const jobsCollection = database.collection('jobsColl');
     const applicationsCollection = database.collection('appsColl');
 
+    // ===================== rest api for users ================
+
     // read operation for all jobs
     app.get('/jobs', async (req, res) => {
       const cursor = jobsCollection.find();
@@ -45,6 +47,13 @@ async function run() {
     app.get('/jobs/:id', async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const result = await jobsCollection.findOne(query);
+      res.send(result);
+    });
+
+    // create operation for jobs
+    app.post('/jobs', async (req, res) => {
+      const doc = req.body;
+      const result = await jobsCollection.insertOne(doc);
       res.send(result);
     });
 
