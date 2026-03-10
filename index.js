@@ -29,16 +29,22 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     console.log('db connected successfully');
+
     // =======================================================================
     const database = client.db('jobsPortalDB');
     const jobsCollection = database.collection('jobsColl');
     const applicationsCollection = database.collection('appsColl');
 
-    // ===================== rest api for users ================
-
     // read operation for all jobs
     app.get('/jobs', async (req, res) => {
-      const cursor = jobsCollection.find();
+      const email = req.query.email;
+      let query = {};
+      if (email) {
+        query = {
+          hr_email: email,
+        };
+      }
+      const cursor = jobsCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -84,8 +90,8 @@ async function run() {
       const result = await applicationsCollection.insertOne(doc);
       res.send(result);
     });
-
     // =======================================================================
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
     console.log(
